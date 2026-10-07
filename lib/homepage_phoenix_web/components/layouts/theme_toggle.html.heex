@@ -1,0 +1,30 @@
+<div id="theme-toggle" class="theme-toggle" role="group" aria-label="表示テーマ">
+  <span class="theme-toggle-indicator" aria-hidden="true"></span>
+  <button
+    type="button"
+    class="theme-toggle-button focus-ring"
+    aria-label="システム設定を使う"
+    phx-click={JS.dispatch("phx:set-theme")}
+    data-phx-theme="system"
+  >
+    <.icon name="hero-computer-desktop-micro" class="size-4" />
+  </button>
+  <button
+    type="button"
+    class="theme-toggle-button focus-ring"
+    aria-label="ライトテーマ"
+    phx-click={JS.dispatch("phx:set-theme")}
+    data-phx-theme="light"
+  >
+    <.icon name="hero-sun-micro" class="size-4" />
+  </button>
+  <button
+    type="button"
+    class="theme-toggle-button focus-ring"
+    aria-label="ダークテーマ"
+    phx-click={JS.dispatch("phx:set-theme")}
+    data-phx-theme="dark"
+  >
+    <.icon name="hero-moon-micro" class="size-4" />
+  </button>
+</div>

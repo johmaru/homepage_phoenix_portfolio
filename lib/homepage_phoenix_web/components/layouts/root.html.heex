@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title default="Johmaruのホームページ" suffix=" · Johmaruのホームページ">
+      {assigns[:page_title]}
+    </.live_title>
+    <meta name="description" content={assigns[:meta_description] || "Johmaruのホームページ"} />
+    <meta :if={assigns[:robots]} name="robots" content={@robots} />
+    <link :if={assigns[:canonical_url]} rel="canonical" href={@canonical_url} />
+
+    <meta property="og:type" content={assigns[:og_type] || "website"} />
+    <meta property="og:site_name" content="Johmaruのホームページ" />
+    <meta property="og:title" content={assigns[:page_title] || "Johmaruのホームページ"} />
+    <meta property="og:description" content={assigns[:meta_description] || "Johmaruのホームページ"} />
+    <meta :if={assigns[:canonical_url]} property="og:url" content={@canonical_url} />
+    <meta :if={assigns[:og_image]} property="og:image" content={@og_image} />
+
+    <meta
+      name="twitter:card"
+      content={if(assigns[:og_image], do: "summary_large_image", else: "summary")}
+    />
+    <meta name="twitter:title" content={assigns[:page_title] || "Johmaruのホームページ"} />
+    <meta name="twitter:description" content={assigns[:meta_description] || "Johmaruのホームページ"} />
+    <meta :if={assigns[:og_image]} name="twitter:image" content={@og_image} />
+
+    <script :if={assigns[:json_ld]} type="application/ld+json">
+      <%= Phoenix.HTML.raw(@json_ld) %>
+    </script>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
+    </script>
+
+    <script>
+      (() => {
+        const setTheme = (theme) => {
+          if (theme === "system") {
+            localStorage.removeItem("phx:theme");
+            document.documentElement.removeAttribute("data-theme");
+          } else {
+            localStorage.setItem("phx:theme", theme);
+            document.documentElement.setAttribute("data-theme", theme);
+          }
+        };
+        if (!document.documentElement.hasAttribute("data-theme")) {
+          setTheme(localStorage.getItem("phx:theme") || "system");
+        }
+        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
+        
+        window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
+      })();
+    </script>
+  </head>
+
+  <body>{@inner_content}</body>
+</html>

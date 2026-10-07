@@ -1,0 +1,203 @@
+<canvas
+  id="starfield"
+  class="fixed inset-0 z-40 pointer-events-none"
+  phx-hook="Starfield"
+  phx-update="ignore"
+  aria-hidden="true"
+>
+</canvas>
+<header
+  id="site-header"
+  class="site-header fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4"
+>
+  <div class="site-header-shell mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-2 sm:px-4">
+    <.link href={~p"/"} class="site-brand focus-ring">
+      <span>Johmaruのホームページ</span>
+    </.link>
+
+    <%!-- デスクトップ用ナビゲーション（モバイルではハンバーガーメニューに収納） --%>
+    <nav id="desktop-navigation" class="site-nav hidden items-center gap-2 md:flex">
+      <.link href={~p"/profile"} class="site-nav-link focus-ring">
+        プロフィール
+      </.link>
+      <.link href={~p"/oshi"} class="site-nav-link focus-ring">
+        推し
+      </.link>
+      <.link href={~p"/activity"} class="site-nav-link focus-ring">
+        活動
+      </.link>
+      <.link href={~p"/memos"} class="site-nav-link focus-ring">メモ</.link>
+      <%= if @current_scope && @current_scope.user.is_admin do %>
+        <.link href={~p"/admin/posts"} class="site-nav-link focus-ring">
+          投稿管理
+        </.link>
+        <.link href={~p"/admin/activity"} class="site-nav-link focus-ring">
+          活動管理
+        </.link>
+        <.link href={~p"/admin/emojis"} class="site-nav-link focus-ring">
+          絵文字管理
+        </.link>
+        <.link href={~p"/admin/memos"} class="site-nav-link focus-ring">メモ管理</.link>
+      <% end %>
+    </nav>
+
+    <div class="flex items-center gap-1.5">
+      <button
+        type="button"
+        id="starfield-toggle"
+        class="site-icon-button focus-ring"
+        aria-pressed="true"
+        aria-label="流れ星を表示"
+        title="流れ星の表示切替"
+      >
+        <.icon name="hero-sparkles-mini" class="size-4" />
+      </button>
+      <.theme_toggle />
+
+      <%!-- デスクトップ用アカウントブロック --%>
+      <div class="hidden items-center gap-2 pl-3 ml-1 border-l border-base-content/10 md:flex">
+        <%= if @current_scope do %>
+          <div class="relative group">
+            <button
+              type="button"
+              class="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-base-content/85 hover:text-base-content hover:bg-base-200/60 transition-colors"
+            >
+              {@current_scope.user.username}
+              <.icon
+                name="hero-chevron-down-mini"
+                class="size-4 transition-transform group-hover:rotate-180"
+              />
+            </button>
+            <div class="invisible absolute right-0 top-full min-w-40 rounded-md border border-base-300 bg-base-100 py-1 opacity-0 shadow-lg transition-opacity duration-150 group-hover:visible group-hover:opacity-100 z-50">
+              <.link
+                href={~p"/users/settings"}
+                class="site-nav-link block px-4 py-2 text-sm text-base-content hover:bg-base-200 transition-colors"
+              >
+                Settings
+              </.link>
+              <.link
+                href={~p"/users/log-out"}
+                method="delete"
+                class="site-nav-link block px-4 py-2 text-sm text-base-content hover:bg-base-200 transition-colors"
+              >
+                Log out
+              </.link>
+            </div>
+          </div>
+        <% else %>
+          <.link
+            href={~p"/users/register"}
+            class="site-nav-link block whitespace-nowrap text-sm text-base-content/85 hover:text-base-content transition-colors"
+          >
+            Register
+          </.link>
+          <.link
+            href={~p"/users/log-in"}
+            class="site-nav-link block whitespace-nowrap text-sm text-base-content/85 hover:text-base-content transition-colors"
+          >
+            Log in
+          </.link>
+        <% end %>
+      </div>
+
+      <%!-- モバイル用ハンバーガーメニュー --%>
+      <details id="site-menu-wrapper" class="relative md:hidden" phx-hook="MobileMenu">
+        <summary
+          id="mobile-menu-button"
+          class="site-icon-button focus-ring flex cursor-pointer items-center justify-center rounded-md p-1.5 text-base-content/85 hover:text-base-content hover:bg-base-200/60 transition-colors"
+          aria-label="メニュー"
+        >
+          <.icon name="hero-bars-3" class="size-5" />
+        </summary>
+
+        <div class="site-menu-panel absolute right-0 top-full mt-2 w-56 rounded-md border border-base-300 bg-base-100 py-2 shadow-lg z-50">
+          <.link
+            href={~p"/profile"}
+            class="site-nav-link block px-4 py-2 text-sm text-base-content hover:bg-base-200 transition-colors"
+          >
+            プロフィール
+          </.link>
+          <.link
+            href={~p"/oshi"}
+            class="site-nav-link block px-4 py-2 text-sm text-base-content hover:bg-base-200 transition-colors"
+          >
+            推し
+          </.link>
+          <.link
+            href={~p"/activity"}
+            class="site-nav-link block px-4 py-2 text-sm text-base-content hover:bg-base-200 transition-colors"
+          >
+            活動
+          </.link>
+          <.link
+            href={~p"/memos"}
+            class="site-nav-link block px-4 py-2 text-sm text-base-content hover:bg-base-200 transition-colors"
+          >
+            メモ
+          </.link>
+          <%= if @current_scope && @current_scope.user.is_admin do %>
+            <.link
+              href={~p"/admin/posts"}
+              class="site-nav-link block px-4 py-2 text-sm text-primary hover:bg-base-200 transition-colors"
+            >
+              投稿管理
+            </.link>
+            <.link
+              href={~p"/admin/activity"}
+              class="site-nav-link block px-4 py-2 text-sm text-primary hover:bg-base-200 transition-colors"
+            >
+              活動管理
+            </.link>
+            <.link
+              href={~p"/admin/memos"}
+              class="site-nav-link block px-4 py-2 text-sm text-primary hover:bg-base-200 transition-colors"
+            >
+              メモ管理
+            </.link>
+            <.link
+              href={~p"/admin/emojis"}
+              class="site-nav-link block px-4 py-2 text-sm text-primary hover:bg-base-200 transition-colors"
+            >
+              絵文字管理
+            </.link>
+          <% end %>
+
+          <div class="my-2 border-t border-base-300"></div>
+
+          <%= if @current_scope do %>
+            <p class="px-4 pb-1 text-xs text-base-content/70">{@current_scope.user.username}</p>
+            <.link
+              href={~p"/users/settings"}
+              class="site-nav-link block px-4 py-2 text-sm text-base-content hover:bg-base-200 transition-colors"
+            >
+              Settings
+            </.link>
+            <.link
+              href={~p"/users/log-out"}
+              method="delete"
+              class="site-nav-link block px-4 py-2 text-sm text-base-content hover:bg-base-200 transition-colors"
+            >
+              Log out
+            </.link>
+          <% else %>
+            <.link
+              href={~p"/users/register"}
+              class="site-nav-link block px-4 py-2 text-sm text-base-content hover:bg-base-200 transition-colors"
+            >
+              Register
+            </.link>
+            <.link
+              href={~p"/users/log-in"}
+              class="site-nav-link block px-4 py-2 text-sm text-base-content hover:bg-base-200 transition-colors"
+            >
+              Log in
+            </.link>
+          <% end %>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<main class="site-main">{render_slot(@inner_block)}</main>
+<.flash_group flash={@flash} id="flash-group" />
